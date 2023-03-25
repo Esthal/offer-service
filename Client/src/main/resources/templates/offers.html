@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <title>Offers</title>
+    <style>
+
+        main {
+            text-align: center;
+        }
+        div {
+            margin: 20px;
+        }
+    </style>
+</head>
+<body>
+<h1>Offers</h1><hr>
+<div th:text="'You are '+${user} "></div>
+
+<a th:href="@{/logout}">Logout</a>
+
+<main th:if="${offers != null}">
+    <div th:each="offer : ${offers}">
+        <form th:action="'/offers/' + ${offer.getId()}" method="post">
+            <b th:text="${offer.getId()}"/>
+
+            <span th:text="${offer.getMessage()}"></span>
+            <span
+                    th:if="${offer.isAlreadyAnswered() == true || !offer.getAnswer().name().equals('LATER')}"
+                    th:text="'Answered: '+${offer.getAnswer()}"></span>
+            <label>
+                <select name="answer">
+                    <option
+                            th:each="val : ${T(com.application.entity.Enum.Answer).values()}"
+                            th:value="${val}" th:text="${val.name()}"></option>
+                </select>
+            </label>
+            <input type="submit" value="Ответить">
+        </form>
+    </div>
+</main>
+</body>
+</html>
