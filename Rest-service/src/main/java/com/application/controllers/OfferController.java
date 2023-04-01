@@ -2,38 +2,35 @@ package com.application.controllers;
 
 import com.application.entity.Enum.Answer;
 import com.application.entity.Offer;
-import com.application.repository.OfferRepository;
-import com.application.repository.UserRepository;
+import com.application.service.impl.KafkaProducerServiceImpl;
+import com.application.service.impl.OfferServiceImpl;
+import com.application.service.impl.UserServiceImpl;
+import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 
-import java.time.LocalDate;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
+@AllArgsConstructor
 public class OfferController {
-    private final OfferRepository offerRepository;
-    private final UserRepository userRepository;
-    public OfferController(OfferRepository offerRepository, UserRepository userRepository) {
-        this.offerRepository = offerRepository;
-        this.userRepository = userRepository;
-    }
-    @GetMapping("/offers/{id}")
-    List<Offer> all(@PathVariable long id) {
-
-         List<Offer> offers = offerRepository.findAllByUserIsOrderById(userRepository.findById(id).get());
-        return offers.stream().filter( item -> item.getAnswer() == Answer.LATER || !item.isAlreadyAnswered()).collect(Collectors.toList());
+    private final OfferServiceImpl offerService;
+    private final UserServiceImpl userService;
+    private final KafkaProducerServiceImpl kafkaProducerService;
+    @GetMapping("/offers/{userName}")
+    List<Offer> getUserOffers(@PathVariable String userName) {
+        return offerService.findAllOffersByUserId(
+                userService.findUserByName(userName).getId()
+        );
     }
 
     @PostMapping("/update/{id}")
     void updateOffer(@PathVariable long id, @RequestParam(name = "answer") Answer answer){
-        if(offerRepository.findById(id).isPresent()){
-            Offer offer = offerRepository.findById(id).get();
-            offer.setAnswer(answer);
-            offer.setAlreadyAnswered(true);
-            offer.setDateOfAnswer(LocalDate.now());
-            offerRepository.save(offer);
+        Offer updateOffer = offerService.updateOffer(id, answer);
+        if(updateOffer != null){
+            if(!answer.equals(Answer.LATER)){
+                kafkaProducerService.sendOffer(String.valueOf(updateOffer.getId()), updateOffer);
+            }
         }
     }
 }

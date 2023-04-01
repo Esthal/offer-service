@@ -1,23 +1,24 @@
 package com.application.controllers;
 
 import com.application.dto.UserDto;
-import com.application.entity.User;
-import com.application.service.UserService;
 import jakarta.validation.Valid;
+import lombok.AllArgsConstructor;
+import org.springframework.http.*;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 @Controller
+@AllArgsConstructor
 public class AuthController {
-    private final UserService userService;
 
-    public AuthController(UserService userService) {
-        this.userService = userService;
-    }
+    private final PasswordEncoder passwordEncoder;
 
     @GetMapping("/login")
     public String login(){
@@ -29,23 +30,30 @@ public class AuthController {
         model.addAttribute("user", user);
         return "register";
     }
-    @PostMapping("/register/save")
+    @PostMapping(value = "/register/save")
     public String registration(@Valid @ModelAttribute("user") UserDto userDto,
                                BindingResult result,
                                Model model){
-        User existingUser = userService.findUserByName(userDto.getName());
+        String url = "http://localhost:8080/user/create";
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        MultiValueMap<String, String> map= new LinkedMultiValueMap<>();
+        map.add("user", userDto.getName());
+        map.add("password", passwordEncoder.encode(userDto.getPassword()));
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
 
-        if(existingUser != null && existingUser.getName() != null && !existingUser.getName().isEmpty()){
+        ResponseEntity<String> loginResponse = restTemplate.postForEntity( url, request , String.class );
+
+        if(!Boolean.parseBoolean(loginResponse.getBody())){
             result.rejectValue("name", null,
                     "Name already registered");
-        }
-
-        if(result.hasErrors()){
             model.addAttribute("user", userDto);
             return "/register";
         }
 
-        userService.saveUser(userDto);
         return "redirect:/login";
     }
+
+
 }

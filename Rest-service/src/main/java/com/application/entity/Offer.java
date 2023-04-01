@@ -1,9 +1,10 @@
 package com.application.entity;
 
 import com.application.entity.Enum.Answer;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDate;
 
@@ -19,14 +20,16 @@ public class Offer{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private String message;
-    @Column(nullable = false, columnDefinition = "boolean default false")
+    private int amount;
+    @Column(nullable = false)
+    @ColumnDefault("false")
     private boolean alreadyAnswered;
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Answer answer;
 
     @ManyToOne()
-    @JsonIgnore
+    @JsonManagedReference()
     private User user;
 
     private LocalDate dateOfAnswer;

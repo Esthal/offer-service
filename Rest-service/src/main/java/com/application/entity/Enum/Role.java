@@ -1,6 +1,7 @@
 package com.application.entity.Enum;
 
 import com.application.entity.User;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -25,5 +26,6 @@ public class Role
     private String name;
 
     @ManyToMany(mappedBy="roles")
+    @JsonBackReference
     private List<User> users;
 }

@@ -1,9 +1,9 @@
 package com.application.controllers;
 
 
-import com.application.entity.Enum.Answer;
-import com.application.entity.Offer;
-import com.application.repository.UserRepository;
+import com.application.dto.OfferDto;
+import com.application.dto.Enum.Answer;
+import lombok.AllArgsConstructor;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,26 +20,19 @@ import org.springframework.web.client.RestTemplate;
 import java.util.List;
 
 @Controller
+@AllArgsConstructor
 public class AppController {
-    private final UserRepository userRepository;
-
-    public AppController(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
-
     @GetMapping("/offers")
     public String home(Model model){
         String userName = SecurityContextHolder.getContext().getAuthentication().getName();
-        long id = userRepository.findByName(userName).getId();
-        String url = "http://localhost:8080/offers/"+id;
+        String url = "http://localhost:8080/offers/"+userName;
         RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<List<Offer>> response = restTemplate.exchange(
+        ResponseEntity<List<OfferDto>> response = restTemplate.exchange(
                 url,
                 HttpMethod.GET,
                 null,
                 new ParameterizedTypeReference<>(){});
-        System.out.println(response);
-        List<Offer> objects = response.getBody();
+        List<OfferDto> objects = response.getBody();
         model.addAttribute("offers", objects);
         model.addAttribute("user", userName);
         return "offers";
@@ -55,6 +48,7 @@ public class AppController {
         map.add("answer", answer);
         HttpEntity<MultiValueMap<String, Answer>> request = new HttpEntity<>(map, headers);
         restTemplate.postForEntity( url, request , String.class );
+
         return "redirect:/offers";
     }
 }

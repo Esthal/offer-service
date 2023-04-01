@@ -1,29 +1,27 @@
-package com.application.entity.Enum;
+package com.application.entity;
 
-import com.application.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
+import java.time.LocalDate;
 
-@Setter
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name="roles")
-public class Role
-{
+@Table(name="users")
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private long id;
 
-    @Column(nullable=false, unique=true)
+    @Column(nullable = false, unique = true)
     private String name;
 
-    @ManyToMany(mappedBy="roles")
-    private List<User> users;
+    private LocalDate dateOfGenerateNewOffer;
+
 }

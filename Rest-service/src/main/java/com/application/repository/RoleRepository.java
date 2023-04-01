@@ -1,6 +1,5 @@
 package com.application.repository;
 
-
 import com.application.entity.Enum.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 

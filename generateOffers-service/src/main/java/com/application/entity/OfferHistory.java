@@ -1,7 +1,6 @@
 package com.application.entity;
 
 import com.application.entity.Enum.Answer;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,28 +9,25 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 
-
-@Setter
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name="offers")
-public class Offer{
+@Table(name="history_of_offers")
+public class OfferHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    private String message;
-    @Column(nullable = false, columnDefinition = "boolean default false")
-    private boolean alreadyAnswered;
+
+    @ManyToOne
+    private User user;
+
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Answer answer;
-
-    @JsonIgnore
-    @ManyToOne()
-    private User user;
-
+    @Column(nullable = false)
     private LocalDate dateOfAnswer;
-
+    @Column(nullable = false)
+    private int amount;
 }
