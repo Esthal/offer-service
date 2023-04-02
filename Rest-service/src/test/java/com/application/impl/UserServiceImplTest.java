@@ -1,6 +1,5 @@
 package com.application.impl;
 
-import com.application.dto.UserDto;
 import com.application.entity.User;
 import com.application.repository.UserRepository;
 import com.application.service.impl.UserServiceImpl;
@@ -17,15 +16,14 @@ public class UserServiceImplTest {
 
     @Test
     public void userSave(){
-        UserDto userDto = new UserDto();
-        userDto.setName("test@mail.ru");
-        userDto.setPassword("Test");
+        String name = "test@mail.ru";
+        String password = "Test";
 
-        userService.saveUser(userDto);
-        User user = userService.findUserByName(userDto.getName());
+        userService.saveUser(name, password);
+        User user = userService.findUserByName(name);
 
-        Assertions.assertEquals(user.getName(), userDto.getName());
-        Assertions.assertEquals(user.getPassword(), userDto.getPassword());
+        Assertions.assertEquals(user.getName(), name);
+        Assertions.assertEquals(user.getPassword(), password);
 
         userRepository.delete(user);
     }

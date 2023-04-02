@@ -1,6 +1,5 @@
 package com.application.controllers;
 
-import com.application.dto.UserDto;
 import com.application.entity.User;
 import com.application.service.impl.KafkaProducerServiceImpl;
 import com.application.service.impl.UserServiceImpl;
@@ -19,9 +18,8 @@ public class UserController {
         if(existingUser != null && existingUser.getName() != null && !existingUser.getName().isEmpty()){
             return false;
         }
-        UserDto userDto = new UserDto(name, password);
-        userService.saveUser(userDto);
-        kafkaProducerService.sendUser(userDto.getName(),userDto.getName());
+        userService.saveUser(name, password);
+        kafkaProducerService.sendUser(name, name);
         return true;
     }
 

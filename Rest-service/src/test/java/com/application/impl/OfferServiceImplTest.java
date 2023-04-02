@@ -1,10 +1,8 @@
 package com.application.impl;
 
-import com.application.dto.UserDto;
 import com.application.entity.Enum.Answer;
 import com.application.entity.Offer;
 import com.application.entity.User;
-import com.application.repository.OfferRepository;
 import com.application.repository.UserRepository;
 import com.application.service.impl.OfferServiceImpl;
 import com.application.service.impl.UserServiceImpl;
@@ -24,12 +22,11 @@ public class OfferServiceImplTest {
 
     @Test
     public void userAddOffer(){
-        UserDto userDto = new UserDto();
-        userDto.setName("test@mail.ru");
-        userDto.setPassword("Test");
+        String name = "test@mail.ru";
+        String password = "Test";
 
-        userService.saveUser(userDto);
-        User user = userService.findUserByName(userDto.getName());
+        userService.saveUser(name, password);
+        User user = userService.findUserByName(name);
 
         String msg = "Message";
         int amount = 5000;
@@ -52,12 +49,11 @@ public class OfferServiceImplTest {
 
     @Test
     public void userUpdateOffer(){
-        UserDto userDto = new UserDto();
-        userDto.setName("test@mail.ru");
-        userDto.setPassword("Test");
+        String name = "test@mail.ru";
+        String password = "Test";
 
-        userService.saveUser(userDto);
-        User user = userService.findUserByName(userDto.getName());
+        userService.saveUser(name, password);
+        User user = userService.findUserByName(name);
 
         String msg = "Message";
         int amount = 5000;
@@ -87,12 +83,11 @@ public class OfferServiceImplTest {
 
     @Test
     public void userClearOldOffers(){
-        UserDto userDto = new UserDto();
-        userDto.setName("test@mail.ru");
-        userDto.setPassword("Test");
+        String name = "test@mail.ru";
+        String password = "Test";
 
-        userService.saveUser(userDto);
-        User user = userService.findUserByName(userDto.getName());
+        userService.saveUser(name, password);
+        User user = userService.findUserByName(name);
 
         String msg = "Message";
         int amount = 5000;

@@ -1,6 +1,5 @@
 package com.application.service.impl;
 
-import com.application.dto.UserDto;
 import com.application.entity.Enum.Role;
 import com.application.entity.User;
 import com.application.repository.RoleRepository;
@@ -23,10 +22,10 @@ public class UserServiceImpl implements UserService {
         return userRepository.findUserByName(name);
     }
     @Override
-    public void saveUser(UserDto userDto) {
+    public void saveUser(String name, String password) {
         User user = new User();
-        user.setName(userDto.getName());
-        user.setPassword(userDto.getPassword());
+        user.setName(name);
+        user.setPassword(password);
 
         Role role = roleRepository.findByName("ROLE_USER");
         if(role == null){
